@@ -85,12 +85,12 @@
                    (slurp cache-file))
             _ (swap! bodies assoc file body)
             body (selmer/render (slurp post-template)
-                                (->map body title date tags discuss))
-            html-file (str/replace file ".md" ".html")]
-        (lib/write-page! opts (fs/file out-dir html-file)
-                         base-html
-                         {:title title
-                                       :body body})
+                                (->map body title date tags discuss))]
+        (when stale?
+          (lib/write-page! opts (fs/file out-dir (html-file file))
+                           base-html
+                           {:title title
+                            :body body}))
         (let [legacy-dir (fs/file out-dir (str/replace date "-" "/")
                                   (str/replace file ".md" ""))]
           (when legacy
